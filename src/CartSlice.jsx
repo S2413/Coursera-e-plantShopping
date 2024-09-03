@@ -4,7 +4,7 @@ export const CartSlice = createSlice({
   name: 'cart',
   initialState: {
     items: [], // Initialize items as an empty array
-    totalQuantity: 5,
+    totalQuantity: 0,
   },
   reducers: {
     addItem: (state, action) => {
@@ -12,10 +12,10 @@ export const CartSlice = createSlice({
         const existingItem = state.items.find(item => item.name === name);
         if (existingItem) {
 
-            // existingItem.quantity++;
         } else {
 
             state.items.push({ name, image, cost, quantity: 1 });
+            state.totalQuantity++;
         }
 },
     removeItem: (state, action) => {
@@ -27,11 +27,15 @@ export const CartSlice = createSlice({
         itemsArray.splice(index , 1);
         state.items = itemsArray;
 
+        state.totalQuantity -= itemToRemove.quantity;
     },
 
     updateQuantity: (state, action) => {
         const { name } = action.payload[0]; // First object of the array which is the plant item
         const itemToUpdate = state.items.find(item => item.name === name);
+
+        state.totalQuantity += (action.payload[1] - itemToUpdate.quantity)
+
         if (itemToUpdate) {
             itemToUpdate.quantity = action.payload[1];  //2nd object of array - new quantity
         }
